@@ -1,0 +1,766 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Top Bar Styles - Enhanced */
+.top-bar {
+    background: linear-gradient(135deg, #ffffff, #f8f8f8);
+    border-radius: 16px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add subtle pattern to top bar */
+.top-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.6) 0%, transparent 20%);
+    pointer-events: none;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #111;
+    position: relative;
+    z-index: 1;
+}
+
+.logo svg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.filter-controls {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.select-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.select-container label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Enhanced Custom Select */
+.custom-select {
+    position: relative;
+    min-width: 120px;
+}
+
+select {
+    appearance: none;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 10px 36px 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+select:focus {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+    border-color: #007aff;
+}
+
+/* Hide the options list when selected */
+select option {
+    background-color: white;
+    color: #333;
+    padding: 10px;
+}
+
+/* Custom arrow styling */
+.select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
+    border-left: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transform: translateY(-50%) rotate(-45deg);
+    transition: transform 0.2s ease;
+}
+
+.custom-select:hover .select-arrow {
+    border-color: #333;
+}
+
+/* Style for selected options in multi-select */
+.selected-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.selected-option {
+    background-color: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    color: #007aff;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.selected-option span {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Code Container Styles */
+.code-container {
+    flex-grow: 1;
+    background-color: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.code-header {
+    background: linear-gradient(to right, #f5f5f7, #f8f8f8);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5e7;
+}
+
+.code-header span {
+    font-weight: 500;
+    font-size: 15px;
+    color: #333;
+}
+
+.reset-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.reset-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #111;
+}
+
+.editor-wrapper {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.line-numbers {
+    width: 50px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #e5e5e7;
+    padding: 16px 0;
+    text-align: right;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 14px;
+    color: #999;
+    user-select: none;
+    overflow-y: hidden;
+}
+
+.line-numbers div {
+    padding: 0 10px;
+    line-height: 1.5;
+}
+
+#code-editor {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 16px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    background-color: #ffffff;
+    color: #333;
+    transition: filter 0.3s ease;
+}
+
+#code-editor.blur {
+    filter: blur(3px);
+    pointer-events: none;
+}
+
+/* Bottom Bar Styles */
+.bottom-bar {
+    background: linear-gradient(135deg, #ffffff, #f8f8f8);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    outline: none;
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007aff, #0066d6);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 122, 255, 0.3);
+}
+
+.primary-button:hover {
+    background: linear-gradient(135deg, #0066d6, #0055b3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.secondary-button {
+    background: linear-gradient(135deg, #f5f5f7, #e5e5e7);
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.secondary-button:hover {
+    background: linear-gradient(135deg, #e5e5e7, #d5d5d7);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.rating-container {
+    display: flex;
+    gap: 10px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Content of styles.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Top Bar Styles - Enhanced */
+.top-bar {
+    background: linear-gradient(135deg, #ffffff, #f8f8f8);
+    border-radius: 16px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add subtle pattern to top bar */
+.top-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.6) 0%, transparent 20%);
+    pointer-events: none;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 20px;
+    color: #111;
+    position: relative;
+    z-index: 1;
+}
+
+.logo svg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.filter-controls {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.select-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.select-container label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Enhanced Custom Select */
+.custom-select {
+    position: relative;
+    min-width: 120px;
+}
+
+select {
+    appearance: none;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 10px 36px 10px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+select:focus {
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+    border-color: #007aff;
+}
+
+/* Hide the options list when selected */
+select option {
+    background-color: white;
+    color: #333;
+    padding: 10px;
+}
+
+/* Custom arrow styling */
+.select-arrow {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
+    border-left: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transform: translateY(-50%) rotate(-45deg);
+    transition: transform 0.2s ease;
+}
+
+.custom-select:hover .select-arrow {
+    border-color: #333;
+}
+
+/* Style for selected options in multi-select */
+.selected-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.selected-option {
+    background-color: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.2);
+    color: #007aff;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.selected-option span {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Code Container Styles */
+.code-container {
+    flex-grow: 1;
+    background-color: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.code-header {
+    background: linear-gradient(to right, #f5f5f7, #f8f8f8);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e5e5e7;
+}
+
+.code-header span {
+    font-weight: 500;
+    font-size: 15px;
+    color: #333;
+}
+
+.reset-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    color: #666;
+}
+
+.reset-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #111;
+}
+
+.editor-wrapper {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.line-numbers {
+    width: 50px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #e5e5e7;
+    padding: 16px 0;
+    text-align: right;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 14px;
+    color: #999;
+    user-select: none;
+    overflow-y: hidden;
+}
+
+.line-numbers div {
+    padding: 0 10px;
+    line-height: 1.5;
+}
+
+#code-editor {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 16px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: none;
+    background-color: #ffffff;
+    color: #333;
+    transition: filter 0.3s ease;
+}
+
+#code-editor.blur {
+    filter: blur(3px);
+    pointer-events: none;
+}
+
+/* Bottom Bar Styles */
+.bottom-bar {
+    background: linear-gradient(135deg, #ffffff, #f8f8f8);
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    outline: none;
+}
+
+.primary-button {
+    background: linear-gradient(135deg, #007aff, #0066d6);
+    color: white;
+    box-shadow: 0 2px 10px rgba(0, 122, 255, 0.3);
+}
+
+.primary-button:hover {
+    background: linear-gradient(135deg, #0066d6, #0055b3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+}
+
+.secondary-button {
+    background: linear-gradient(135deg, #f5f5f7, #e5e5e7);
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.secondary-button:hover {
+    background: linear-gradient(135deg, #e5e5e7, #d5d5d7);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.rating-container {
+    display: flex;
+    gap: 10px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* End of styles.css */
+
+/* Additional CSS Code */
+.rating-button {
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rating-button.very-easy {
+    background: linear-gradient(135deg, #34c759, #28a745);
+    color: white;
+}
+
+.rating-button.easy {
+    background: linear-gradient(135deg, #7dd75f, #5cb85c);
+    color: white;
+}
+
+.rating-button.medium {
+    background: linear-gradient(135deg, #ffcc00, #f0ad4e);
+    color: #333;
+}
+
+.rating-button.hard {
+    background: linear-gradient(135deg, #ff9500, #fd7e14);
+    color: white;
+}
+
+.rating-button.very-hard {
+    background: linear-gradient(135deg, #ff3b30, #dc3545);
+    color: white;
+}
+
+.rating-button:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.pulse {
+    animation: pulse 0.5s ease;
+}
+
+/* Error message */
+.error-message {
+    background-color: rgba(255, 59, 48, 0.1);
+    border-left: 3px solid #ff3b30;
+    color: #ff3b30;
+    padding: 12px 16px;
+    margin-top: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    height: 0;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(255, 59, 48, 0.1);
+}
+
+.error-message.active {
+    opacity: 1;
+    height: auto;
+    margin-top: 10px;
+}
+
+.error-message svg {
+    flex-shrink: 0;
+}
+
+/* Style for multiple select when options are selected */
+.language-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+}
+
+.language-tag {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(0, 122, 255, 0.2));
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    color: #007aff;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.language-tag .remove {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.language-tag .remove:hover {
+    color: #0055b3;
+}
+
+/* Hide the select dropdown */
+select[multiple] {
+    height: 36px;
+    overflow: hidden;
+}
