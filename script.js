@@ -236,19 +236,75 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
 //for dropdowns
 document.addEventListener('DOMContentLoaded', function() {
-    const label = document.getElementById('language-label');
-    const dropdown = document.getElementById('language-dropdown');
+    function setupDropdown(labelId, dropdownId) {
+        const label = document.getElementById(labelId);
+        const dropdown = document.getElementById(dropdownId);
 
-    label.addEventListener('click', function() {
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        label.addEventListener('click', function() {
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.addEventListener('click', function(event) {
+            if (!label.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+
+    setupDropdown('language-label', 'language-dropdown');
+    setupDropdown('difficulty-label', 'difficulty-dropdown');
+    setupDropdown('topic-label', 'topic-dropdown');
+});
+
+
+// Metrics Sidebar Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const metricsSidebar = document.querySelector('.metrics-sidebar');
+    const metricsButton = document.querySelector('.metrics-button');
+    const sidebarContent = metricsSidebar.querySelector('.sidebar-content');
+    const pinButton = metricsSidebar.querySelector('.pin-button');
+    
+    // Show sidebar on hover over metrics button
+    metricsButton.addEventListener('mouseenter', function() {
+        if (!metricsSidebar.classList.contains('pinned')) {
+            metricsSidebar.classList.add('active');
+        }
     });
-
-    document.addEventListener('click', function(event) {
-        if (!label.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.style.display = 'none';
+    
+    // Check if user is touching the leftmost edge of the screen
+    document.addEventListener('mousemove', function(e) {
+        // Only check for left edge if in full screen mode
+        if (window.innerWidth === screen.width) {
+            const edgeThreshold = 10; // pixels from the edge
+            if (e.clientX <= edgeThreshold) {
+                if (!metricsSidebar.classList.contains('pinned')) {
+                    metricsSidebar.classList.add('active');
+                }
+            }
+        }
+    });
+    
+    // Hide sidebar when mouse leaves the sidebar area unless pinned
+    sidebarContent.addEventListener('mouseleave', function(e) {
+        if (!metricsSidebar.classList.contains('pinned')) {
+            // Check if mouse is not over the metrics button
+            if (!metricsButton.matches(':hover')) {
+                metricsSidebar.classList.remove('active');
+            }
+        }
+    });
+    
+    // Toggle pinned state on pin button click
+    pinButton.addEventListener('click', function() {
+        metricsSidebar.classList.toggle('pinned');
+        
+        // If unpinning and mouse is not over sidebar, close it
+        if (!metricsSidebar.classList.contains('pinned') && 
+            !sidebarContent.matches(':hover') &&
+            !metricsButton.matches(':hover')) {
+            metricsSidebar.classList.remove('active');
         }
     });
 });

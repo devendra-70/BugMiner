@@ -734,16 +734,29 @@ select[multiple] {
     position: relative;
     display: inline-block;
     cursor: pointer;
+    margin-right: 5px;
+}
+
+.separator {
+    width: 1px;
+    height: 18px;
+    background: #ccc;
+    margin: 0 3px;
 }
 
 .dropdown-label {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: bold;
     color: #444;
-    padding: 8px 12px;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: color 0.3s, background 0.3s;
+    display: inline-block;
+}
+
+.dropdown-label:hover {
+    color: #555;
 }
 
 .dropdown-menu {
@@ -753,19 +766,110 @@ select[multiple] {
     left: 0;
     background: white;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 22px;
     display: none;
-    width: 100px;
-    padding: 5px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 180px;
+    padding: 10px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .dropdown-menu li {
-    padding: 8px 12px;
+    padding: 14px 20px;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s, color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    border-radius: 18px;
+    margin: 8px 10px;
 }
 
 .dropdown-menu li:hover {
-    background: #f0f0f0;
+    background: #e0e0e0;
+    color: black;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Metrics SideBar*/
+/* Metrics Sidebar Styles */
+.metrics-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+}
+
+.metrics-button {
+    font-size: 22px !important;
+    font-family: "Noto Serif Display", serif !important;
+    font-optical-sizing: auto !important;
+    font-weight: 700 !important;
+    font-style: normal !important;
+    font-variation-settings: "wdth" 100 !important;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1001;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+.metrics-button:hover {
+    font-weight: 700 !important;
+    color: #222;
+}
+
+.metrics-sidebar .sidebar-content {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    width: 280px;
+    height: calc(100vh - 50px);
+    background: #f5f5f7;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.metrics-sidebar.active .sidebar-content {
+    transform: translateX(0);
+}
+
+.metrics-sidebar.pinned .pin-button {
+    transform: rotate(45deg);
+    color: #007aff;
+}
+
+/* Newly added header styles */
+.metrics-sidebar .sidebar-header {
+    flex-direction: row-reverse; /* Reverse the order of elements */
+    justify-content: flex-start; /* Align items to the start */
+}
+
+.metrics-sidebar .pin-button {
+    margin-left: auto; /* Push the pin button to the right */
+    margin-right: 0;
+}
+
+.metrics-sidebar .sidebar-header h3 {
+    margin-left: 0;
+    margin-right: auto; /* Push the title to the left */
+    padding-left: 10px;
 }
