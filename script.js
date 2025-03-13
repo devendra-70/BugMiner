@@ -19,6 +19,33 @@ document.addEventListener('DOMContentLoaded', function() {
     languageTagsContainer.className = 'language-tags';
     languageSelectContainer.appendChild(languageTagsContainer);
 
+    // Add event listeners to labels to trigger dropdowns
+    document.getElementById('language-label').addEventListener('click', function() {
+    languageSelect.click();
+});
+document.getElementById('difficulty-label').addEventListener('click', function() {
+    difficultySelect.click();
+});
+document.getElementById('button-label').addEventListener('click', function() {
+    buttonSelect.click();
+});
+
+    // Ensure dropdowns appear on top of everything when focused
+    allSelects.forEach(select => {
+        select.addEventListener('focus', function() {
+            this.style.zIndex = '1000';
+            this.style.opacity = '1';
+            this.style.visibility = 'visible';
+        });
+        select.addEventListener('blur', function() {
+            setTimeout(() => {
+                this.style.zIndex = '1';
+                this.style.opacity = '0';
+                this.style.visibility = 'hidden';
+            }, 200); // Delay to allow selection before hiding
+        });
+    });
+
     // Handle multiple select language dropdown
     languageSelect.addEventListener('change', function(e) {
         updateLanguageTags();
@@ -41,13 +68,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(e) {
         // Check if the click is outside any select element
         const isClickOutsideSelects = !Array.from(allSelects).some(select => 
-            select.contains(e.target) || select.parentElement.contains(e.target)
+            select.contains(e.target) || select.parentElement.contains(e.target) || 
+            (select.previousElementSibling && select.previousElementSibling.contains(e.target))
         );
         
         if (isClickOutsideSelects) {
             // Blur (close) all select elements
             allSelects.forEach(select => {
                 select.blur();
+                select.style.opacity = '0';
+                select.style.visibility = 'hidden';
             });
         }
     });
