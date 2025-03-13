@@ -22,34 +22,20 @@
                 <span>BugMiner</span>
             </div>
             <div class="filter-controls">
-                <div class="select-container">
-                    <label id="language-label">Language</label>
-                    <select id="language" multiple>
-                        <option value="java">Java</option>
-                        <option value="python">Python</option>
-                        <option value="sql">SQL</option>
-                        <option value="rust">Rust</option>
-                        <option value="go">Go</option>
-                        <option value="haskell">Haskell</option>
-                    </select>
+                <div class="dropdown">
+                    <span class="dropdown-label" id="language-label">Language</span>
+                    <ul class="dropdown-menu" id="language-dropdown">
+                        <li data-value="python">Python</li>
+                        <li data-value="java">Java</li>
+                        <li data-value="c">C</li>
+                        <li data-value="cpp">C++</li>
+                        <li data-value="haskell">Haskell</li>
+                        <li data-value="go">Go</li>
+                        <li data-value="ruby">Ruby</li>
+                    </ul>
                 </div>
                 
-                <div class="select-container">
-                    <label id="difficulty-label">Difficulty</label>
-                    <select id="difficulty">
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
-                </div>
-                
-                <div class="select-container">
-                    <label id="button-label">Topic</label>
-                    <select id="button">
-                        <option value="option1">Option 1</option>
-                    </select>
-                </div>
-                
+                  
             </div>
         </div>
 

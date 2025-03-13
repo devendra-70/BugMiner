@@ -13,46 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize line numbers
     updateLineNumbers();
 
-    // Create language tags container
-    const languageSelectContainer = languageSelect.parentElement.parentElement;
-    const languageTagsContainer = document.createElement('div');
-    languageTagsContainer.className = 'language-tags';
-    languageSelectContainer.appendChild(languageTagsContainer);
-
-    // Add event listeners to labels to trigger dropdowns
-    document.getElementById('language-label').addEventListener('click', function() {
-    languageSelect.click();
-});
-document.getElementById('difficulty-label').addEventListener('click', function() {
-    difficultySelect.click();
-});
-document.getElementById('button-label').addEventListener('click', function() {
-    buttonSelect.click();
-});
-
-    // Ensure dropdowns appear on top of everything when focused
-    allSelects.forEach(select => {
-        select.addEventListener('focus', function() {
-            this.style.zIndex = '1000';
-            this.style.opacity = '1';
-            this.style.visibility = 'visible';
-        });
-        select.addEventListener('blur', function() {
-            setTimeout(() => {
-                this.style.zIndex = '1';
-                this.style.opacity = '0';
-                this.style.visibility = 'hidden';
-            }, 200); // Delay to allow selection before hiding
-        });
-    });
-
-    // Handle multiple select language dropdown
-    languageSelect.addEventListener('change', function(e) {
-        updateLanguageTags();
-    });
-
-    // Initialize language tags
-    updateLanguageTags();
 
     // Update line numbers when typing
     codeEditor.addEventListener('input', function() {
@@ -62,43 +22,6 @@ document.getElementById('button-label').addEventListener('click', function() {
     // Update line numbers when scrolling
     codeEditor.addEventListener('scroll', function() {
         lineNumbers.scrollTop = codeEditor.scrollTop;
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        // Check if the click is outside any select element
-        const isClickOutsideSelects = !Array.from(allSelects).some(select => 
-            select.contains(e.target) || select.parentElement.contains(e.target) || 
-            (select.previousElementSibling && select.previousElementSibling.contains(e.target))
-        );
-        
-        if (isClickOutsideSelects) {
-            // Blur (close) all select elements
-            allSelects.forEach(select => {
-                select.blur();
-                select.style.opacity = '0';
-                select.style.visibility = 'hidden';
-            });
-        }
-    });
-
-    // Prevent dropdown from showing options list when clicked
-    allSelects.forEach(select => {
-        select.addEventListener('mousedown', function(e) {
-            if (select.multiple) {
-                // For multiple select, we need to handle differently
-                e.preventDefault();
-                this.focus();
-                
-                // Toggle the selection of the option that was clicked
-                if (e.target.tagName === 'OPTION') {
-                    e.target.selected = !e.target.selected;
-                    // Trigger change event
-                    const event = new Event('change');
-                    this.dispatchEvent(event);
-                }
-            }
-        });
     });
 
     // Reset code
@@ -143,7 +66,7 @@ document.getElementById('button-label').addEventListener('click', function() {
             nextButton.classList.remove('pulse');
         }, 500);
         
-        // For now, just clear the code and ratings
+        // Clear the code and ratings
         codeEditor.value = '';
         updateLineNumbers();
         codeEditor.classList.remove('blur');
@@ -153,29 +76,7 @@ document.getElementById('button-label').addEventListener('click', function() {
         removeErrorMessage();
     });
 
-    // Function to update language tags
-    function updateLanguageTags() {
-        languageTagsContainer.innerHTML = '';
-        
-        const selectedOptions = Array.from(languageSelect.selectedOptions);
-        
-        if (selectedOptions.length > 0) {
-            selectedOptions.forEach(option => {
-                const tag = document.createElement('div');
-                tag.className = 'language-tag';
-                tag.dataset.value = option.value;
-                tag.innerHTML = `${option.text} <span class="remove">&times;</span>`;
-                
-                // Add click handler for removal
-                tag.querySelector('.remove').addEventListener('click', function() {
-                    option.selected = false;
-                    updateLanguageTags();
-                });
-                
-                languageTagsContainer.appendChild(tag);
-            });
-        }
-    }
+
 
     // Function to update line numbers
     function updateLineNumbers() {
@@ -332,5 +233,22 @@ document.addEventListener('DOMContentLoaded', function() {
             historyItems.forEach(i => i.classList.remove('selected'));
             this.classList.add('selected');
         });
+    });
+});
+
+
+//for dropdowns
+document.addEventListener('DOMContentLoaded', function() {
+    const label = document.getElementById('language-label');
+    const dropdown = document.getElementById('language-dropdown');
+
+    label.addEventListener('click', function() {
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!label.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.style.display = 'none';
+        }
     });
 });
