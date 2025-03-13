@@ -241,3 +241,66 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+// Updated History Sidebar Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const historySidebar = document.querySelector('.history-sidebar');
+    const historyButton = document.querySelector('.history-button');
+    const sidebarContent = document.querySelector('.sidebar-content');
+    const pinButton = document.querySelector('.pin-button');
+    
+    // Show sidebar on hover over history button
+    historyButton.addEventListener('mouseenter', function() {
+        if (!historySidebar.classList.contains('pinned')) {
+            historySidebar.classList.add('active');
+        }
+    });
+    
+    // Check if user is touching the rightmost edge of the screen
+    document.addEventListener('mousemove', function(e) {
+        // Only check for right edge if in full screen mode
+        if (window.innerWidth === screen.width) {
+            const edgeThreshold = 10; // pixels from the edge
+            if (e.clientX >= window.innerWidth - edgeThreshold) {
+                if (!historySidebar.classList.contains('pinned')) {
+                    historySidebar.classList.add('active');
+                }
+            }
+        }
+    });
+    
+    // Hide sidebar when mouse leaves the sidebar area unless pinned
+    sidebarContent.addEventListener('mouseleave', function(e) {
+        if (!historySidebar.classList.contains('pinned')) {
+            // Check if mouse is not over the history button
+            if (!historyButton.matches(':hover')) {
+                historySidebar.classList.remove('active');
+            }
+        }
+    });
+    
+    // Toggle pinned state on pin button click
+    pinButton.addEventListener('click', function() {
+        historySidebar.classList.toggle('pinned');
+        
+        // If unpinning and mouse is not over sidebar, close it
+        if (!historySidebar.classList.contains('pinned') && 
+            !sidebarContent.matches(':hover') &&
+            !historyButton.matches(':hover')) {
+            historySidebar.classList.remove('active');
+        }
+    });
+    
+    // Add click event to history items (for demonstration)
+    const historyItems = document.querySelectorAll('.history-item');
+    historyItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // For demonstration - would load the selected code
+            console.log('Selected history item:', this.querySelector('.history-title').textContent);
+            
+            // Highlight the selected item
+            historyItems.forEach(i => i.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+});
