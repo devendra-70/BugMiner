@@ -86,6 +86,12 @@
                                 <path d="M11 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8V4zm2 0v16h8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-8z" fill="currentColor"/>
                             </svg>
                         </button>
+                        <button id="dig-bug" class="header-button" title="Dig Bug">
+                            <img src="/resources/digger.png" alt="Digger Icon" width="16" height="16">
+                        </button>
+                        
+                        
+                        
                     </div>
                 </div>
             <div class="editor-wrapper">
@@ -113,7 +119,7 @@
         <!-- New sidebar element -->
         <div class="history-sidebar">
             <div class="history-button">
-                <span>History</span>
+                <span>Statistics</span>
             </div>
             <div class="sidebar-content">
                 <div class="sidebar-header">
@@ -122,30 +128,42 @@
                             <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" fill="currentColor"/>
                         </svg>
                     </button>
-                    <h3></h3>
                 </div>
                 <div class="sidebar-body">
-                    <!-- History content will go here -->
-                    <div class="history-item">
-                        <div class="history-title">Python Solution #1</div>
-                        <div class="history-date">Today, 10:45 AM</div>
+                    <div class="metrics-section">
+                        <h4>Metrics</h4>
+                        <div id="metrics-content">
+                            <!-- Metrics content will go here -->
+                        </div>
                     </div>
-                    <div class="history-item">
-                        <div class="history-title">Java Binary Search</div>
-                        <div class="history-date">Yesterday, 3:20 PM</div>
-                    </div>
-                    <div class="history-item">
-                        <div class="history-title">SQL Query Optimization</div>
-                        <div class="history-date">Mar 12, 2:15 PM</div>
+                    <hr>
+                    <div class="history-section">
+                        <h4>History</h4>
+                        <div id="history-content">
+                            <!-- Populate with existing entries -->
+                            <div class="history-item">
+                                <div class="history-title">Python Solution #1</div>
+                                <div class="history-date">Today, 10:45 AM</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-title">Java Binary Search</div>
+                                <div class="history-date">Yesterday, 3:20 PM</div>
+                            </div>
+                            <div class="history-item">
+                                <div class="history-title">SQL Query Optimization</div>
+                                <div class="history-date">Mar 12, 2:15 PM</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
 
         <!-- New metrics sidebar element -->
         <div class="metrics-sidebar">
             <div class="metrics-button">
-                <span>Metrics</span>
+                <span>Problem</span>
             </div>
             <div class="sidebar-content">
                 <div class="sidebar-header">
@@ -158,6 +176,22 @@
                 </div>
                 <div class="sidebar-body">
                     <!-- Metrics content will go here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-bar">
+            <div class="profile-content">
+                <div class="profile-left">
+                    <div class="profile-pic">
+                        <img src="resources/profile_pic_default.jpg" alt="Profile Picture">
+                    </div>
+                    <div class="profile-name">Arden ved</div>
+                </div>
+                <div class="profile-menu">
+                    <div class="menu-item">Settings</div>
+                    <div class="menu-item">Log Out</div>
+                    <div class="menu-item">Statistics</div>
                 </div>
             </div>
         </div>

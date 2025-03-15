@@ -478,3 +478,41 @@ function handleFullscreenChange() {
         exitFullScreenButton.style.display = 'inline-block';
     }
 }
+
+//profile bar
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Profile bar functionality
+    const profileBar = document.querySelector('.profile-bar');
+    const profileLeft = document.querySelector('.profile-left');
+    
+    profileLeft.addEventListener('click', function() {
+        profileBar.classList.toggle('expanded');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!profileBar.contains(event.target) && profileBar.classList.contains('expanded')) {
+            profileBar.classList.remove('expanded');
+        }
+    });
+    
+    // Prevent the document click handler from firing when clicking inside the profile bar
+    profileBar.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+    
+    // Menu item click functionality
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            console.log('Clicked:', this.textContent);
+            // Add actual functionality for each menu item here
+            
+            // Close the menu after a slight delay
+            setTimeout(() => {
+                profileBar.classList.remove('expanded');
+            }, 300);
+        });
+    });
+});
