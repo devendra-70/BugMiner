@@ -184,6 +184,66 @@ body {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Rating dots container that will appear in the top bar */
+.rating-dots-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 24px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.rating-dots-container.show {
+    opacity: 1;
+    animation: fadeInOut 2s ease forwards;
+}
+
+.rating-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.rating-dots-container.show .rating-dot {
+    opacity: 1;
+}
+
+/* Colors for dots matching rating buttons */
+.very-easy-dot {
+    background: linear-gradient(135deg, #34c759, #28a745);
+}
+
+.easy-dot {
+    background: linear-gradient(135deg, #7dd75f, #5cb85c);
+}
+
+.medium-dot {
+    background: linear-gradient(135deg, #ffcc00, #f0ad4e);
+}
+
+.hard-dot {
+    background: linear-gradient(135deg, #ff9500, #fd7e14);
+}
+
+.very-hard-dot {
+    background: linear-gradient(135deg, #ff3b30, #dc3545);
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 /* Code Editor Section */
 .editor-wrapper {
     display: flex;

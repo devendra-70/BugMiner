@@ -459,11 +459,11 @@ document.addEventListener('DOMContentLoaded', function() {
         ratingContainer.innerHTML = '';
         
         const ratings = [
-            { label: 'Very Easy', class: 'very-easy' },
-            { label: 'Easy', class: 'easy' },
-            { label: 'Medium', class: 'medium' },
-            { label: 'Hard', class: 'hard' },
-            { label: 'Very Hard', class: 'very-hard' }
+            { label: 'Very Easy', class: 'very-easy', dots: 5 },
+            { label: 'Easy', class: 'easy', dots: 4 },
+            { label: 'Medium', class: 'medium', dots: 3 },
+            { label: 'Hard', class: 'hard', dots: 2 },
+            { label: 'Very Hard', class: 'very-hard', dots: 1 }
         ];
         
         ratings.forEach((rating, index) => {
@@ -474,6 +474,9 @@ document.addEventListener('DOMContentLoaded', function() {
             button.style.transform = 'translateY(10px)';
             
             button.addEventListener('click', function() {
+                // Show the rating dots in top bar
+                showRatingDots(rating.class, rating.dots);
+                
                 // Hide all rating buttons and remove blur effect
                 setTimeout(() => {
                     ratingContainer.innerHTML = '';
@@ -489,6 +492,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 button.style.opacity = '1';
                 button.style.transform = 'translateY(0)';
             }, 50 * index);
+        });
+    }
+
+    // Function to show rating dots in the top bar
+    function showRatingDots(ratingClass, numberOfDots) {
+        // Create a container for the dots if it doesn't exist
+        let dotsContainer = document.querySelector('.rating-dots-container');
+        if (!dotsContainer) {
+            dotsContainer = document.createElement('div');
+            dotsContainer.className = 'rating-dots-container';
+            document.querySelector('.top-bar').appendChild(dotsContainer);
+        } else {
+            dotsContainer.innerHTML = '';
+        }
+        
+        // Create the dots
+        for (let i = 0; i < numberOfDots; i++) {
+            const dot = document.createElement('div');
+            dot.className = `rating-dot ${ratingClass}-dot`;
+            dotsContainer.appendChild(dot);
+        }
+        
+        // Show the dots immediately
+        requestAnimationFrame(() => {
+            dotsContainer.classList.add('show');
+            
+            // Fade out after exactly 2 seconds
+            setTimeout(() => {
+                dotsContainer.classList.remove('show');
+                
+                // Clean up after transition completes
+                setTimeout(() => {
+                    dotsContainer.innerHTML = '';
+                }, 300);
+            }, 2000);
         });
     }
 
