@@ -798,7 +798,7 @@ select[multiple] {
 .metrics-button {
   left: 20px;
 }
-
+/* */
 .history-button:hover, .metrics-button:hover {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
