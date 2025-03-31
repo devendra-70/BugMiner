@@ -14,40 +14,258 @@ document.addEventListener('DOMContentLoaded', function() {
     const notesArea = document.getElementById('notes-area');
     const notesEditor = document.getElementById('notes-editor');
     const codeNotesContainer = document.querySelector('.code-notes-container');
-
-    // Initialize line numbers
-    updateLineNumbers();
-
-
-    // Update line numbers when typing
+    
+    // History for undo/redo functionality
+    let codeHistory = [''];
+    let currentPosition = 0;
+    let typingTimer;
+    let lastLength = 0;
+    const TYPING_DELAY = 800; // ms delay before considering typing "complete"
+    
+    // Replace BugMiner logo with navigation buttons
+    const logoDiv = document.querySelector('.logo');
+    if (logoDiv) {
+        logoDiv.innerHTML = `
+            <div class="navigation-buttons">
+                <button id="undo-button" class="nav-button disabled" title="Undo">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button id="redo-button" class="nav-button disabled" title="Redo">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+    }
+    
+    // Add undo/redo buttons functionality
+    const undoButton = document.getElementById('undo-button');
+    const redoButton = document.getElementById('redo-button');
+    
+    // Implement undo functionality
+    undoButton.addEventListener('click', function() {
+        if (currentPosition > 0) {
+            currentPosition--;
+            codeEditor.value = codeHistory[currentPosition];
+            updateLineNumbers();
+            updateUndoRedoButtons();
+        }
+    });
+    
+    // Implement redo functionality
+    redoButton.addEventListener('click', function() {
+        if (currentPosition < codeHistory.length - 1) {
+            currentPosition++;
+            codeEditor.value = codeHistory[currentPosition];
+            updateLineNumbers();
+            updateUndoRedoButtons();
+        }
+    });
+    
+    // Update undo/redo buttons state
+    function updateUndoRedoButtons() {
+        undoButton.classList.toggle('disabled', currentPosition <= 0);
+        redoButton.classList.toggle('disabled', currentPosition >= codeHistory.length - 1);
+    }
+    
+    // Save code state for undo/redo when typing
     codeEditor.addEventListener('input', function() {
+        // Clear the timeout if it's been set
+        if (typingTimer) {
+            clearTimeout(typingTimer);
+        }
+        
+        // Get the current content length
+        const currentLength = codeEditor.value.length;
+        
+        // Check if the change is significant
+        const isSignificantChange = isSignificantTextChange(lastLength, currentLength);
+        
+        // If it's a significant immediate change (paste, cut, delete line), save now
+        if (isSignificantChange) {
+            saveCurrentState();
+        } else {
+            // Otherwise wait for typing to complete
+            typingTimer = setTimeout(function() {
+                // Only save if content has changed from the last save
+                if (currentPosition >= 0 && 
+                    codeEditor.value !== codeHistory[currentPosition]) {
+                    saveCurrentState();
+                }
+            }, TYPING_DELAY);
+        }
+        
+        // Update the last known length
+        lastLength = currentLength;
+        
+        // Always update line numbers
         updateLineNumbers();
     });
-
-    // Update line numbers when scrolling
-    codeEditor.addEventListener('scroll', function() {
-        lineNumbers.scrollTop = codeEditor.scrollTop;
+    
+    // Detect keypresses that typically cause significant changes
+    codeEditor.addEventListener('keydown', function(e) {
+        // Detect Enter, Tab, Backspace on empty line, multi-line delete, etc.
+        if (e.key === 'Enter' || e.key === 'Tab' || 
+            (e.key === 'Backspace' && isCursorAtLineStart()) || 
+            (e.key === 'Delete' && isCursorAtLineEnd()) ||
+            ((e.metaKey || e.ctrlKey) && (
+                e.key === 'v' || // Paste
+                e.key === 'x' || // Cut
+                e.key === 'z' || // Undo
+                e.key === 'y'    // Redo
+            ))) {
+            // Complete the current typing session
+            if (typingTimer) {
+                clearTimeout(typingTimer);
+            }
+            
+            // Only save if content has changed from the last save
+            if (currentPosition >= 0 && 
+                codeEditor.value !== codeHistory[currentPosition]) {
+                saveCurrentState();
+            }
+        }
+    });
+    
+    // Check if cursor is at line start
+    function isCursorAtLineStart() {
+        const cursorPos = codeEditor.selectionStart;
+        const valueUpToCursor = codeEditor.value.substring(0, cursorPos);
+        return valueUpToCursor.endsWith('\n') || cursorPos === 0;
+    }
+    
+    // Check if cursor is at line end
+    function isCursorAtLineEnd() {
+        const cursorPos = codeEditor.selectionStart;
+        const value = codeEditor.value;
+        return cursorPos === value.length || value.charAt(cursorPos) === '\n';
+    }
+    
+    // Check if the change is significant 
+    function isSignificantTextChange(oldLength, newLength) {
+        // Detect paste or cut operations (significant length changes)
+        const lengthDiff = Math.abs(oldLength - newLength);
+        return lengthDiff > 10; // Arbitrary threshold for significant change
+    }
+    
+    // Save the current state
+    function saveCurrentState() {
+        // If we made a change from a position other than the end of history,
+        // remove all future states (similar to how a real editor works)
+        if (currentPosition < codeHistory.length - 1) {
+            codeHistory = codeHistory.slice(0, currentPosition + 1);
+        }
+        
+        // Add the new state to history
+        currentPosition++;
+        codeHistory.push(codeEditor.value);
+        
+        // Limit history size 
+        if (codeHistory.length > 50) { // Reduced from 100 since we track bigger changes
+            codeHistory.shift();
+            currentPosition--;
+        }
+        
+        updateUndoRedoButtons();
+    }
+    
+    // Add explicit undo/redo keyboard shortcuts
+    codeEditor.addEventListener('keydown', function(e) {
+        // Detect Ctrl+Z or Command+Z for undo
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+            e.preventDefault();
+            if (currentPosition > 0) {
+                currentPosition--;
+                codeEditor.value = codeHistory[currentPosition];
+                updateLineNumbers();
+                updateUndoRedoButtons();
+            }
+        }
+        
+        // Detect Ctrl+Y or Command+Shift+Z for redo
+        if ((e.ctrlKey && e.key === 'y') || ((e.ctrlKey || e.metaKey) && e.key === 'z' && e.shiftKey)) {
+            e.preventDefault();
+            if (currentPosition < codeHistory.length - 1) {
+                currentPosition++;
+                codeEditor.value = codeHistory[currentPosition];
+                updateLineNumbers();
+                updateUndoRedoButtons();
+            }
+        }
     });
 
-    // Reset code
-    resetButton.addEventListener('click', function() {
-        codeEditor.value = '';
-        updateLineNumbers();
-        resetButton.classList.add('pulse');
+    // Add download button to notes area - floating version
+    if (notesArea) {
+        // Create floating download button
+        const downloadButton = document.createElement('button');
+        downloadButton.id = 'download-notes';
+        downloadButton.className = 'floating-download-button';
+        downloadButton.title = 'Download Notes';
+        downloadButton.innerHTML = `
+            <svg viewBox="0 0 24 24" width="16" height="16">
+                <path d="M11,4H13V16L18.5,10.5L19.92,11.92L12,19.84L4.08,11.92L5.5,10.5L11,16V4Z" fill="currentColor"/>
+            </svg>
+        `;
+        
+        // Hide by default
+        downloadButton.style.opacity = '0';
+        downloadButton.style.pointerEvents = 'none';
+        
+        // Add to notes area
+        notesArea.appendChild(downloadButton);
+        
+        // Show button when typing in notes
+        notesEditor.addEventListener('input', function() {
+            if (notesEditor.value.trim() !== '') {
+                downloadButton.style.opacity = '1';
+                downloadButton.style.pointerEvents = 'auto';
+            } else {
+                downloadButton.style.opacity = '0';
+                downloadButton.style.pointerEvents = 'none';
+            }
+        });
+        
+        // Show button when notes already has content
+        if (notesEditor.value.trim() !== '') {
+            downloadButton.style.opacity = '1';
+            downloadButton.style.pointerEvents = 'auto';
+        }
+        
+        // Add download functionality
+        downloadButton.addEventListener('click', function() {
+            downloadNotes();
+        });
+    }
+    
+    // Function to download notes
+    function downloadNotes() {
+        if (!notesEditor || !notesEditor.value) {
+            // No notes to download
+            return;
+        }
+        
+        // Direct download as TXT
+        const noteContent = notesEditor.value;
+        const blob = new Blob([noteContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'notes.txt';
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
         setTimeout(() => {
-            resetButton.classList.remove('pulse');
-        }, 500);
-        
-        // Remove any existing error message
-        removeErrorMessage();
-        
-        // Remove blur effect and rating buttons if present
-        codeEditor.classList.remove('blur');
-        ratingContainer.innerHTML = '';
-    });
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+    }
 
-    // Split view functionality
-    // Replace the existing split-view click handler in script.js
+    // Update split view functionality to handle the notes header
     splitButton.addEventListener('click', function() {
         splitButton.classList.toggle('active');
         codeNotesContainer.classList.toggle('split-active');
@@ -79,11 +297,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 10);
         }
     });
-
+    
     // Resizer functionality
-    // Replace the existing resizer code in script.js with this version
-    // Replace the existing resizer code in script.js with this version
-    // Complete replacement for the resizer functionality
     let isResizing = false;
     let startX, startCodeWidth, startNotesWidth;
 
@@ -94,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get both the code editor and notes area computed styles
         const codeEditorStyle = window.getComputedStyle(codeEditor);
         const notesAreaStyle = window.getComputedStyle(notesArea);
-        
+
         // Store both widths - important for preserving the proper ratio
         startCodeWidth = parseFloat(codeEditorStyle.width);
         startNotesWidth = parseFloat(notesAreaStyle.width);
@@ -120,7 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Calculate new widths
         let newCodeWidth = startCodeWidth + moveX;
         let newNotesWidth = totalWidth - newCodeWidth;
-        
+
         // Convert to percentages
         const codeWidthPercent = (newCodeWidth / totalWidth) * 100;
         const notesWidthPercent = (newNotesWidth / totalWidth) * 100;
@@ -154,6 +369,36 @@ document.addEventListener('DOMContentLoaded', function() {
             // Only remove hover effects if we're not actively resizing
             // This keeps the resizer styled during active resize even if mouse moves away a bit
         }
+    });
+    
+    // Initialize line numbers
+    updateLineNumbers();
+
+    // Update line numbers when typing
+    codeEditor.addEventListener('input', function() {
+        updateLineNumbers();
+    });
+
+    // Update line numbers when scrolling
+    codeEditor.addEventListener('scroll', function() {
+        lineNumbers.scrollTop = codeEditor.scrollTop;
+    });
+
+    // Reset code
+    resetButton.addEventListener('click', function() {
+        codeEditor.value = '';
+        updateLineNumbers();
+        resetButton.classList.add('pulse');
+        setTimeout(() => {
+            resetButton.classList.remove('pulse');
+        }, 500);
+        
+        // Remove any existing error message
+        removeErrorMessage();
+        
+        // Remove blur effect and rating buttons if present
+        codeEditor.classList.remove('blur');
+        ratingContainer.innerHTML = '';
     });
 
     // Submit code
@@ -190,8 +435,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove any existing error message
         removeErrorMessage();
     });
-
-
 
     // Function to update line numbers
     function updateLineNumbers() {
@@ -288,56 +531,72 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Updated History Sidebar Functionality
+// Sidebar Functionality - UPDATED VERSION
 document.addEventListener('DOMContentLoaded', function() {
+    // Create and add an edge trigger element for better detection
+    const edgeTrigger = document.createElement('div');
+    edgeTrigger.className = 'edge-trigger';
+    document.body.appendChild(edgeTrigger);
+    
+    // Get sidebar elements
     const historySidebar = document.querySelector('.history-sidebar');
-    const historyButton = document.querySelector('.history-button');
     const sidebarContent = document.querySelector('.sidebar-content');
     const pinButton = document.querySelector('.pin-button');
     
-    // Show sidebar on hover over history button
-    historyButton.addEventListener('mouseenter', function() {
+    // Create a proper header with Statistics title if it doesn't exist
+    if (!document.querySelector('.sidebar-title')) {
+        const sidebarHeader = document.querySelector('.sidebar-header');
+        const titleElement = document.createElement('h3');
+        titleElement.className = 'sidebar-title';
+        titleElement.textContent = 'Statistics';
+        
+        // Insert before the pin button
+        sidebarHeader.insertBefore(titleElement, sidebarHeader.firstChild);
+    }
+    
+    // Show sidebar when hovering over the edge trigger
+    edgeTrigger.addEventListener('mouseenter', function() {
         if (!historySidebar.classList.contains('pinned')) {
             historySidebar.classList.add('active');
         }
     });
     
-    // Check if user is touching the rightmost edge of the screen
+    // Also check for mouse position near right edge of screen
     document.addEventListener('mousemove', function(e) {
-        // Only check for right edge if in full screen mode
-        if (window.innerWidth === screen.width) {
-            const edgeThreshold = 10; // pixels from the edge
-            if (e.clientX >= window.innerWidth - edgeThreshold) {
-                if (!historySidebar.classList.contains('pinned')) {
-                    historySidebar.classList.add('active');
-                }
+        const edgeThreshold = 10; // pixels from the edge
+        if (e.clientX >= window.innerWidth - edgeThreshold) {
+            if (!historySidebar.classList.contains('pinned')) {
+                historySidebar.classList.add('active');
             }
         }
     });
     
     // Hide sidebar when mouse leaves the sidebar area unless pinned
-    sidebarContent.addEventListener('mouseleave', function(e) {
+    sidebarContent.addEventListener('mouseleave', function() {
         if (!historySidebar.classList.contains('pinned')) {
-            // Check if mouse is not over the history button
-            if (!historyButton.matches(':hover')) {
-                historySidebar.classList.remove('active');
-            }
+            historySidebar.classList.remove('active');
         }
     });
     
-    // Toggle pinned state on pin button click
+    // Toggle pinned state on pin button click (without width adjustment)
     pinButton.addEventListener('click', function() {
         historySidebar.classList.toggle('pinned');
         
         // If unpinning and mouse is not over sidebar, close it
         if (!historySidebar.classList.contains('pinned') && 
-            !sidebarContent.matches(':hover') &&
-            !historyButton.matches(':hover')) {
+            !sidebarContent.matches(':hover')) {
             historySidebar.classList.remove('active');
+        }
+        
+        // Update body class for CSS selectors
+        if (historySidebar.classList.contains('pinned')) {
+            document.body.classList.add('sidebar-pinned');
+        } else {
+            document.body.classList.remove('sidebar-pinned');
         }
     });
     
-    // Add click event to history items (for demonstration)
+    // Add click event to history items
     const historyItems = document.querySelectorAll('.history-item');
     historyItems.forEach(item => {
         item.addEventListener('click', function() {
@@ -349,6 +608,20 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('selected');
         });
     });
+    
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(event) {
+        // Only proceed if sidebar is active but not pinned
+        if (historySidebar.classList.contains('active') && 
+            !historySidebar.classList.contains('pinned')) {
+            
+            // Check if click is outside sidebar
+            if (!sidebarContent.contains(event.target) && 
+                !edgeTrigger.contains(event.target)) {
+                historySidebar.classList.remove('active');
+            }
+        }
+    });
 });
 
 //for dropdowns
@@ -357,22 +630,101 @@ document.addEventListener('DOMContentLoaded', function() {
         const label = document.getElementById(labelId);
         const dropdown = document.getElementById(dropdownId);
 
-        label.addEventListener('click', function() {
-            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        if (!label || !dropdown) return;
+
+        label.addEventListener('click', function(event) {
+            // Toggle current dropdown
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+                label.classList.remove('active');
+            } else {
+                // Close all other dropdowns first
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+                
+                // Remove active class from all labels
+                document.querySelectorAll('.dropdown-label').forEach(lbl => {
+                    lbl.classList.remove('active');
+                });
+                
+                // Add active class to current label
+                label.classList.add('active');
+                
+                // Position dropdown to avoid viewport overflow
+                positionDropdown(dropdown);
+                
+                dropdown.style.display = 'block';
+                event.stopPropagation(); // Prevent immediate closing
+            }
         });
 
         document.addEventListener('click', function(event) {
             if (!label.contains(event.target) && !dropdown.contains(event.target)) {
                 dropdown.style.display = 'none';
+                label.classList.remove('active');
             }
         });
+        
+        // Handle dropdown item selection
+        dropdown.querySelectorAll('li').forEach(item => {
+            item.addEventListener('click', function() {
+                // You can store the selected value if needed
+                const value = this.getAttribute('data-value');
+                
+                // Update label text with selection if desired
+                // label.textContent = this.textContent;
+                
+                // Close dropdown
+                dropdown.style.display = 'none';
+                label.classList.remove('active');
+            });
+        });
+    }
+    
+    // Function to properly position dropdowns
+    function positionDropdown(dropdown) {
+        // Reset any previous positioning
+        dropdown.style.left = '';
+        dropdown.style.right = '';
+        
+        // Get dropdown parent and its position
+        const parent = dropdown.parentElement;
+        const rect = parent.getBoundingClientRect();
+        
+        // Check if dropdown would overflow to the right
+        const dropdownWidth = 160; // Match the CSS width
+        
+        if (rect.left + dropdownWidth > window.innerWidth) {
+            // Position from right edge if it would overflow
+            dropdown.style.left = 'auto';
+            dropdown.style.right = '0';
+        } else {
+            // Default position from left
+            dropdown.style.left = '0';
+            dropdown.style.right = 'auto';
+        }
+        
+        // Optional: Check for bottom overflow too
+        const dropdownHeight = dropdown.scrollHeight;
+        if (rect.bottom + dropdownHeight > window.innerHeight) {
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '100%';
+        }
     }
 
     setupDropdown('language-label', 'language-dropdown');
     setupDropdown('difficulty-label', 'difficulty-dropdown');
     setupDropdown('topic-label', 'topic-dropdown');
+    
+    // Handle window resize to reposition open dropdowns
+    window.addEventListener('resize', function() {
+        const openDropdown = document.querySelector('.dropdown-menu[style*="display: block"]');
+        if (openDropdown) {
+            positionDropdown(openDropdown);
+        }
+    });
 });
-
 
 // Metrics Sidebar Functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -515,4 +867,84 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
     });
+});
+
+//logout
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the logout menu item
+    const logoutMenuItem = document.querySelector('.profile-menu .menu-item:nth-child(2)');
+    
+    // Add click event listener to the logout menu item
+    if (logoutMenuItem) {
+        logoutMenuItem.addEventListener('click', function() {
+            // Simulate logout process
+            performLogout();
+        });
+    }
+    
+    // Function to handle logout
+    function performLogout() {
+        // You could clear any session data here
+        // For example:
+        // localStorage.removeItem('user');
+        // sessionStorage.removeItem('token');
+        
+        // Redirect to the auth page
+        window.location.href = 'auth.html';
+    }
+});
+
+// Add this function at the end of the file
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the main elements we need to adjust
+    const container = document.querySelector("body > div.app-layout > div.container");
+    const historySidebar = document.querySelector('.history-sidebar');
+    const pinButton = document.querySelector('.pin-button');
+    
+    if (container && historySidebar && pinButton) {
+        // Define a simple resize function that only affects the container
+        function resizeContainer() {
+            if (historySidebar.classList.contains('pinned')) {
+                container.style.width = 'calc(100% - 300px)';
+                container.style.marginRight = '300px';
+            } else {
+                container.style.width = '100%';
+                container.style.marginRight = '0';
+            }
+        }
+        
+        // Add event listener to pin button
+        pinButton.addEventListener('click', function() {
+            // Let a slight delay for classList toggle to complete
+            setTimeout(resizeContainer, 0);
+        });
+        
+        // Call on initial load
+        resizeContainer();
+        
+        // Watch for changes in pinned state through attribute mutations
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && 
+                    mutation.attributeName === 'class' &&
+                    historySidebar.classList.contains('pinned') !== container.classList.contains('sidebar-active')) {
+                    resizeContainer();
+                }
+            });
+        });
+        
+        // Start observing
+        observer.observe(historySidebar, {
+            attributes: true
+        });
+        
+        // Handle resize events
+        window.addEventListener('resize', resizeContainer);
+        
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', resizeContainer);
+        document.addEventListener('webkitfullscreenchange', resizeContainer);
+        document.addEventListener('mozfullscreenchange', resizeContainer);
+        document.addEventListener('MSFullscreenChange', resizeContainer);
+    }
 });

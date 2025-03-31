@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BugMiner - Modern Coding Platform</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles_optimal.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,188 +12,187 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="top-bar">
-            <div class="logo">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
-                    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="currentColor"/>
-                </svg>
-                <span>BugMiner</span>
+    <div class="app-layout">
+        <!-- Problem Section -->
+        <div class="problem-section">
+            <div class="problem-header">
+                <h2>Two Sum</h2>
             </div>
-            <div class="filter-controls">
-                <div class="dropdown">
-                    <span class="dropdown-label" id="language-label">Language</span>
-                    <ul class="dropdown-menu" id="language-dropdown">
-                        <li data-value="python">Python</li>
-                        <li data-value="java">Java</li>
-                        <li data-value="c">C</li>
-                        <li data-value="cpp">C++</li>
-                        <li data-value="haskell">Haskell</li>
-                        <li data-value="go">Go</li>
-                        <li data-value="ruby">Ruby</li>
+            <div class="problem-content">
+                <div class="problem-description">
+                    <h3>Problem Description</h3>
+                    <p>Given an array of integers <code>nums</code> and an integer <code>target</code>, return indices of the two numbers in the array such that they add up to the target. You may assume that each input would have exactly one solution, and you may not use the same element twice.</p>
+                    
+                    <h3>Example 1:</h3>
+                    <pre>
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].</pre>
+
+                    <h3>Example 2:</h3>
+                    <pre>
+Input: nums = [3,2,4], target = 6
+Output: [1,2]</pre>
+
+                    <h3>Constraints:</h3>
+                    <ul>
+                        <li>2 ≤ nums.length ≤ 10<sup>4</sup></li>
+                        <li>-10<sup>9</sup> ≤ nums[i] ≤ 10<sup>9</sup></li>
+                        <li>-10<sup>9</sup> ≤ target ≤ 10<sup>9</sup></li>
+                        <li>Only one valid answer exists.</li>
                     </ul>
+
+                    <h3>Follow-up:</h3>
+                    <p>Can you come up with an algorithm that is less than O(n²) time complexity?</p>
                 </div>
-                
-                <div class="separator"></div>
-                
-                <div class="dropdown">
-                    <span class="dropdown-label" id="difficulty-label">Difficulty</span>
-                    <ul class="dropdown-menu" id="difficulty-dropdown">
-                        <li data-value="easy">Easy</li>
-                        <li data-value="medium">Medium</li>
-                        <li data-value="hard">Hard</li>
-                    </ul>
-                </div>
-                
-                <div class="separator"></div>
-                
-                <div class="dropdown">
-                    <span class="dropdown-label" id="topic-label">Topic</span>
-                    <ul class="dropdown-menu" id="topic-dropdown">
-                        <li data-value="arrays">Arrays</li>
-                        <li data-value="strings">Strings</li>
-                        <li data-value="graphs">Graphs</li>
-                        <li data-value="dp">Dynamic Programming</li>
-                    </ul>
-                </div>    
-                  
             </div>
         </div>
 
-        <div class="code-container">
-            <!-- In index.html, modify the code-header div -->
-                <div class="code-header">
-                    <span>Code Editor</span>
-                    <div class="header-buttons">
-                        <button id="reset-code" class="header-button" title="Reset Code">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
-                            </svg>
-                        </button>
-                        <button id="full-screen" class="header-button" title="Full Screen">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" fill="currentColor"/>
-                            </svg>
-                        </button>
-                        <button id="exit-full-screen" class="header-button" title="Exit Full Screen" style="display: none;">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" fill="currentColor"/>
-                            </svg>
-                        </button>
-                        <button id="split-view" class="header-button" title="Split View">
-                            <svg viewBox="0 0 24 24" width="16" height="16">
-                                <path d="M11 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8V4zm2 0v16h8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-8z" fill="currentColor"/>
-                            </svg>
-                        </button>
-                        <button id="dig-bug" class="header-button" title="Dig Bug">
-                            <img src="/resources/digger.png" alt="Digger Icon" width="16" height="16">
-                        </button>
-                        
-                        
-                        
+        <!-- Main content -->
+        <div class="container">
+            <div class="top-bar">
+                <div class="logo">
+                    <!-- Navigation buttons will be added by JavaScript -->
+                </div>
+                <div class="filter-controls">
+                    <div class="dropdown">
+                        <span class="dropdown-label" id="language-label">Language</span>
+                        <ul class="dropdown-menu" id="language-dropdown">
+                            <li data-value="python">Python</li>
+                            <li data-value="java">Java</li>
+                            <li data-value="c">C</li>
+                            <li data-value="cpp">C++</li>
+                            <li data-value="haskell">Haskell</li>
+                            <li data-value="go">Go</li>
+                            <li data-value="ruby">Ruby</li>
+                        </ul>
                     </div>
-                </div>
-            <div class="editor-wrapper">
-                <div class="line-numbers" id="line-numbers"></div>
-                <div class="code-notes-container">
-                    <textarea id="code-editor" spellcheck="false" placeholder="Write your code here..."></textarea>
-                    <div class="resizer" id="resizer"></div>
-                    <div class="notes-area" id="notes-area">
-                        <textarea id="notes-editor" spellcheck="false" placeholder="Take your notes here..."></textarea>
+                    
+                    <div class="separator"></div>
+                    
+                    <div class="dropdown">
+                        <span class="dropdown-label" id="difficulty-label">Difficulty</span>
+                        <ul class="dropdown-menu" id="difficulty-dropdown">
+                            <li data-value="easy">Easy</li>
+                            <li data-value="medium">Medium</li>
+                            <li data-value="hard">Hard</li>
+                        </ul>
                     </div>
+                    
+                    <div class="separator"></div>
+                    
+                    <div class="dropdown">
+                        <span class="dropdown-label" id="topic-label">Topic</span>
+                        <ul class="dropdown-menu" id="topic-dropdown">
+                            <li data-value="arrays">Arrays</li>
+                            <li data-value="strings">Strings</li>
+                            <li data-value="graphs">Graphs</li>
+                            <li data-value="dp">Dynamic Programming</li>
+                        </ul>
+                    </div>    
+                      
                 </div>
             </div>
-        </div>
 
-        <div class="bottom-bar">
-            <div class="rating-container" id="rating-container">
-                <!-- Rating buttons will appear here after submission -->
-            </div>
-            <div class="action-buttons">
-                <button id="submit-button" class="primary-button">Submit</button>
-                <button id="next-button" class="secondary-button">Next</button>
-            </div>
-        </div>
-
-        <!-- New sidebar element -->
-        <div class="history-sidebar">
-            <div class="history-button">
-                <span>Statistics</span>
-            </div>
-            <div class="sidebar-content">
-                <div class="sidebar-header">
-                    <button class="pin-button">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" fill="currentColor"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="sidebar-body">
-                    <div class="metrics-section">
-                        <h4>Metrics</h4>
-                        <div id="metrics-content">
-                            <!-- Metrics content will go here -->
+            <div class="code-container">
+                <!-- In index.html, modify the code-header div -->
+                    <div class="code-header">
+                        <span>Code Editor</span>
+                        <div class="header-buttons">
+                            <button id="reset-code" class="header-button" title="Reset Code">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button id="full-screen" class="header-button" title="Full Screen">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button id="exit-full-screen" class="header-button" title="Exit Full Screen" style="display: none;">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button id="split-view" class="header-button" title="Split View">
+                                <svg viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M11 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h8V4zm2 0v16h8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-8z" fill="currentColor"/>
+                                </svg>
+                            </button>
+                            <button id="dig-bug" class="header-button" title="Dig Bug">
+                                <img src="/resources/digger.png" alt="Digger Icon" width="16" height="16">
+                            </button>
+                            
+                            
+                            
                         </div>
                     </div>
-                    <hr>
-                    <div class="history-section">
-                        <h4>History</h4>
-                        <div id="history-content">
-                            <!-- Populate with existing entries -->
-                            <div class="history-item">
-                                <div class="history-title">Python Solution #1</div>
-                                <div class="history-date">Today, 10:45 AM</div>
-                            </div>
-                            <div class="history-item">
-                                <div class="history-title">Java Binary Search</div>
-                                <div class="history-date">Yesterday, 3:20 PM</div>
-                            </div>
-                            <div class="history-item">
-                                <div class="history-title">SQL Query Optimization</div>
-                                <div class="history-date">Mar 12, 2:15 PM</div>
-                            </div>
+                <div class="editor-wrapper">
+                    <div class="line-numbers" id="line-numbers"></div>
+                    <div class="code-notes-container">
+                        <textarea id="code-editor" spellcheck="false" placeholder="Write your code here..."></textarea>
+                        <div class="resizer" id="resizer"></div>
+                        <div class="notes-area" id="notes-area">
+                            <textarea id="notes-editor" spellcheck="false" placeholder="Take your notes here..."></textarea>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
 
-        <!-- New metrics sidebar element -->
-        <div class="metrics-sidebar">
-            <div class="metrics-button">
-                <span>Problem</span>
-            </div>
-            <div class="sidebar-content">
-                <div class="sidebar-header">
-                    <button class="pin-button">
-                        <svg viewBox="0 0 24 24" width="16" height="16">
-                            <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" fill="currentColor"/>
-                        </svg>
-                    </button>
-                    <h3></h3>
+            <div class="bottom-bar">
+                <div class="rating-container" id="rating-container">
+                    <!-- Rating buttons will appear here after submission -->
                 </div>
-                <div class="sidebar-body">
-                    <!-- Metrics content will go here -->
+                <div class="action-buttons">
+                    <button id="submit-button" class="primary-button">Submit</button>
+                    <button id="next-button" class="secondary-button">Next</button>
                 </div>
             </div>
-        </div>
 
-        <div class="profile-bar">
-            <div class="profile-content">
-                <div class="profile-left">
-                    <div class="profile-pic">
-                        <img src="resources/profile_pic_default.jpg" alt="Profile Picture">
+            <!-- New sidebar element -->
+            <div class="history-sidebar">
+                <div class="sidebar-content">
+                    <div class="sidebar-header">
+                        <h3 class="sidebar-title">Statistics</h3>
+                        <button class="pin-button">
+                            <svg viewBox="0 0 24 24" width="16" height="16">
+                                <path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z" fill="currentColor"/>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="profile-name">Arden ved</div>
-                </div>
-                <div class="profile-menu">
-                    <div class="menu-item">Settings</div>
-                    <div class="menu-item">Log Out</div>
-                    <div class="menu-item">Statistics</div>
+                    <div class="sidebar-body">
+                        <div class="metrics-section">
+                            <h4>Metrics</h4>
+                            <div id="metrics-content">
+                                <!-- Metrics content will go here -->
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="history-section">
+                            <h4>History</h4>
+                            <div id="history-content">
+                                <!-- History items -->
+                            </div>
+                        </div>
+                        <div class="profile-bar">
+                            <div class="profile-content">
+                                <div class="profile-left">
+                                    <div class="profile-pic">
+                                        <img src="resources/profile_pic_default.jpg" alt="Profile Picture">
+                                    </div>
+                                    <div class="profile-name">Arden ved</div>
+                                </div>
+                                <div class="profile-menu">
+                                    <div class="menu-item">Settings</div>
+                                    <div class="menu-item">Log Out</div>
+                                    <div class="menu-item">Statistics</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
     </div>
     <script src="script.js"></script>
